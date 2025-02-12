@@ -18,7 +18,7 @@ Installation & Setup
 1️⃣ Clone the Repository
 sh
 Copy
-git clone https://github.com/your-username/your-repo-name.git
+git clone [https://github.com/your-username/your-repo-name.git](https://github.com/stejabhat/Compression.git)
 cd your-repo-name
 2️⃣ Create a Virtual Environment
 sh
