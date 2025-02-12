@@ -44,8 +44,6 @@ Upload a ZIP file → The system extracts and recompresses it to a smaller size.
 Upload a folder → The system compresses it into a .7z archive.
 Automatic Download → Once the process completes, the compressed file will download automatically.
 Progress Bar → Tracks the upload status.
-Screenshots
-Add screenshots of your app UI here.
 
 Project Structure
 php
