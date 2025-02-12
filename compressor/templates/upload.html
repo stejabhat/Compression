@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Folder for Compression</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        /* Upload Box */
+        .upload-box {
+            border: 2px dashed #007bff;
+            padding: 30px;
+            background: #e9f3ff;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #0056b3;
+            transition: background 0.3s ease;
+        }
+
+        .upload-box:hover {
+            background: #d4e7ff;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Upload Button */
+        .upload-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            background: #0056b3;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background: #ddd;
+            border-radius: 5px;
+            height: 20px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #007bff;
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            line-height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Upload Folder for Compression</h1>
+        <form id="folder-upload-form" action="/compress-folder/" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Upload Box -->
+            <label for="folder-input" class="upload-box">
+                Click to Select Folder
+            </label>
+            <input id="folder-input" type="file" name="folder_files" webkitdirectory multiple required>
+            
+            <!-- Upload Button -->
+            <button type="submit" class="upload-btn">Compress Folder</button>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar">0%</div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('folder-input').addEventListener('change', function(event) {
+            let files = event.target.files;
+            if (files.length > 0) {
+                document.querySelector('.upload-box').textContent = "Folder Selected: " + files[0].webkitRelativePath.split('/')[0];
+            }
+        });
+
+        document.getElementById('folder-upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let formData = new FormData(this);
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', this.action, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            let progressBar = document.getElementById('progress-bar');
+            let progressContainer = document.querySelector('.progress-container');
+            progressContainer.style.display = 'block';
+
+            xhr.upload.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    let percent = Math.round((event.loaded / event.total) * 100);
+                    progressBar.style.width = percent + '%';
+                    progressBar.textContent = percent + '%';
+                }
+            };
+
+            xhr.onload = function() {
+                if (xhr.status == 200) {
+                    let response = JSON.parse(xhr.responseText);
+                    let compressedFile = response.compressed_file;
+                    window.location.href = "/download/" + compressedFile;
+                } else {
+                    progressBar.style.background = '#dc3545';
+                    progressBar.textContent = 'Error!';
+                }
+            };
+
+            xhr.send(formData);
+        });
+    </script>
+
+</body>
+</html>
