@@ -66,7 +66,9 @@ Install using:
 pip install django py7zr
 ```
 **🤝 Contributing**
+
 ***Fork the repository***
+
 Create a new branch
 ```
 git checkout -b feature-name
